@@ -1,0 +1,233 @@
+src/
+ ├─ components/
+ │    ├─ Navbar.jsx
+ │    └─ Slider.jsx
+ ├─ pages/
+ │    ├─ HomePage.jsx
+ │    ├─ ExercisePage.jsx
+ │    ├─ ProgressPage.jsx
+ │    └─ ChatPage.jsx
+ ├─ App.jsx
+ ├─ main.jsx
+ └─ styles.css
+:root {
+  --primary: #4C9F70;
+  --secondary: #3A7CA5;
+  --bg: #F5F9F8;
+  --text: #1E1E1E;
+  --highlight: #E8F5E9;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background: #3f8a60;
+}
+
+.navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+  border-top: 1px solid #ddd;
+}
+import { Link } from "react-router-dom";
+
+export default function Navbar() {
+  return (
+    <div className="navbar">
+      <Link to="/">Etusivu</Link>
+      <Link to="/exercise">Harjoitukset</Link>
+      <Link to="/progress">Edistyminen</Link>
+      <Link to="/chat">Viestit</Link>
+    </div>
+  );
+}
+export default function Slider({ label, value, setValue }) {
+  return (
+    <div className="card">
+      <h4>{label}</h4>
+      <input
+        type="range"
+        min="0"
+        max="10"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <p>Taso: {value}</p>
+    </div>
+  );
+}
+import { useState } from "react";
+import Slider from "../components/Slider";
+
+export default function HomePage() {
+  const [pain, setPain] = useState(3);
+  const [energy, setEnergy] = useState(6);
+  const [mood, setMood] = useState(7);
+
+  return (
+    <div className="container">
+      <h2>Päivän tila</h2>
+
+      <Slider label="Kiputaso" value={pain} setValue={setPain} />
+      <Slider label="Energia" value={energy} setValue={setEnergy} />
+      <Slider label="Mieliala" value={mood} setValue={setMood} />
+
+      <div className="card">
+        <h3>Päivän harjoitus</h3>
+        <p>Jalkojen nostot</p>
+        <button>Aloita</button>
+      </div>
+
+      <div className="card" style={{ background: "var(--highlight)" }}>
+        <p>12 päivää putkeen! Hienoa työtä!</p>
+      </div>
+    </div>
+  );
+}
+export default function ExercisePage() {
+  return (
+    <div className="container">
+      <h2>Jalkojen nostot</h2>
+
+      <div className="card">
+        <video width="100%" controls>
+          <source src="/exercise.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <div className="card">
+        <h3>Ohjeet</h3>
+        <p>Nosta jalat suoriksi, pidä hetki yläasennossa, laske hitaasti alas.</p>
+        <p>Toistot: 10 × 2</p>
+        <button>Tallenna video</button>
+      </div>
+    </div>
+  );
+}
+export default function ProgressPage() {
+  return (
+    <div className="container">
+      <h2>Edistyminen</h2>
+
+      <div className="card">
+        <h3>Liikerata +15%</h3>
+        <p>Ennen vs. nyt</p>
+        <img src="/range.png" width="100%" />
+      </div>
+
+      <div className="card">
+        <h3>Viikkoyhteenveto</h3>
+        <p>Harjoitukset: 5/7</p>
+        <p>Kiputaso: laskeva trendi</p>
+        <p>Energia: nouseva trendi</p>
+      </div>
+
+      <div className="card" style={{ background: "var(--highlight)" }}>
+        <p>Taso 2! Hyvä edistys!</p>
+      </div>
+    </div>
+  );
+}
+import { useState } from "react";
+
+export default function ChatPage() {
+  const [messages, setMessages] = useState([
+    { from: "Anna", text: "Hyvin menee, jatka samaan malliin!" },
+    { from: "Sinä", text: "Miten voisin parantaa liikettä?" },
+    { from: "Anna", text: "Kokeile nostaa polvea hieman korkeammalle." }
+  ]);
+
+  const [input, setInput] = useState("");
+
+  const sendMessage = () => {
+    if (!input) return;
+    setMessages([...messages, { from: "Sinä", text: input }]);
+    setInput("");
+  };
+
+  return (
+    <div className="container">
+      <h2>Viestit</h2>
+
+      <div className="card">
+        {messages.map((m, i) => (
+          <p key={i}><strong>{m.from}:</strong> {m.text}</p>
+        ))}
+      </div>
+
+      <input
+        style={{ width: "100%", padding: "12px", marginTop: "10px" }}
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Kirjoita viesti..."
+      />
+
+      <button onClick={sendMessage} style={{ marginTop: "10px" }}>
+        Lähetä
+      </button>
+    </div>
+  );
+}
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import HomePage from "./pages/HomePage";
+import ExercisePage from "./pages/ExercisePage";
+import ProgressPage from "./pages/ProgressPage";
+import ChatPage from "./pages/ChatPage";
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/exercise" element={<ExercisePage />} />
+        <Route path="/progress" element={<ProgressPage />} />
+        <Route path="/chat" element={<ChatPage />} />
+      </Routes>
+      <Navbar />
+    </BrowserRouter>
+  );
+}
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./styles.css";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
